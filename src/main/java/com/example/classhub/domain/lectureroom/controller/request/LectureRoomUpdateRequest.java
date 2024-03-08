@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class LectureRoomUpdateRequest {
-    private String name;
+    private String LectureRoomName;
     private boolean OnOff;
 }

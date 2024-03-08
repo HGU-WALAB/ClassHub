@@ -1,5 +1,6 @@
 package com.example.classhub.domain.tag.controller;
 
+import com.example.classhub.domain.lectureroom.controller.request.LectureRoomCreateRequest;
 import com.example.classhub.domain.tag.controller.request.TagRequest;
 import com.example.classhub.domain.tag.controller.response.TagListResponse;
 import com.example.classhub.domain.tag.controller.response.TagResponse;
@@ -19,16 +20,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class TagController {
     private final TagService tagService;
 
-    @GetMapping("/tag/tagForm")
-    public String createTagForm(Model model){
-        model.addAttribute("tag", new TagRequest());
-        return "tagForm";
-    }
-    @PostMapping("/tag/saveTag")
-    public String createLectureRoom(@ModelAttribute("lectureRoom") TagRequest request){
-        tagService.createTag(TagDto.from(request));
-        return "redirect:/tag";
-    }
+//    @GetMapping("/tag/tagForm")
+//    public String createTagForm(Model model){
+//        model.addAttribute("tag", new TagRequest());
+//        return "tagForm";
+//    }
+//    @PostMapping("/tag/saveTag")
+//    public String createLectureRoom(@ModelAttribute("lectureRoom") TagRequest request){
+//        tagService.createTag(TagDto.from(request));
+//        return "redirect:/tag";
+//    }
 
     @GetMapping("/tag")
     public String findTagList(Model model){
@@ -45,7 +46,7 @@ public class TagController {
     }
 
     @PostMapping("/tag/update/{tagId}")
-    public String updateTag(@PathVariable Long tagId, @ModelAttribute("tag") TagRequest request){
+    public String updateTag(@PathVariable Long tagId, @ModelAttribute("tag") LectureRoomCreateRequest request){
         tagService.update(tagId, TagDto.from(request));
         return "redirect:/tag";
     }

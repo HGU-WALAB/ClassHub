@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class LectureRoomCreateRequest {
-    private String name;
+    private String lectureRoomName;
     private boolean OnOff;
+
+    // 태그에 필요한 것들을 매칭
+    private String tagName;
 }

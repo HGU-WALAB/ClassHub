@@ -20,14 +20,14 @@ public class LectureRoom extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long lectureRoomId;
-    private String name;
+    private String lectureRoomName;
     private String taInviteCode;
     private String stInviteCode;
     private boolean onOff;
 
     public static LectureRoom from(LectureRoomDto lectureRoomDto, String taInviteCode, String stInviteCode) {
         return LectureRoom.builder()
-                .name(lectureRoomDto.getName())
+                .lectureRoomName(lectureRoomDto.getLectureRoomName())
                 .taInviteCode(taInviteCode)
                 .stInviteCode(stInviteCode)
                 .onOff(lectureRoomDto.isOnOff())
@@ -35,7 +35,7 @@ public class LectureRoom extends BaseEntity {
     }
 
     public void update(LectureRoomDto lectureRoomDto) {
-        this.name = lectureRoomDto.getName();
+        this.lectureRoomName = lectureRoomDto.getLectureRoomName();
         this.onOff = lectureRoomDto.isOnOff();
     }
 }

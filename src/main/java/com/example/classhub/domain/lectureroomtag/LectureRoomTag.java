@@ -1,6 +1,9 @@
 package com.example.classhub.domain.lectureroomtag;
 
+import com.example.classhub.domain.BaseEntity;
 import com.example.classhub.domain.lectureroom.LectureRoom;
+import com.example.classhub.domain.lectureroom.dto.LectureRoomDto;
+import com.example.classhub.domain.lectureroomtag.dto.LectureRoomTagDto;
 import com.example.classhub.domain.tag.Tag;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LectureRoomTag {
+public class LectureRoomTag extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long lectureRoomTagId;
@@ -25,7 +28,9 @@ public class LectureRoomTag {
     @JoinColumn(name = "tagId")
     private Tag tag;
 
+
     @ManyToOne
     @JoinColumn(name = "lectureRoomId")
     private LectureRoom lectureRoom;
+
 }

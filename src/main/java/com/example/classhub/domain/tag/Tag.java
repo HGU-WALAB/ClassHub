@@ -6,10 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
@@ -21,16 +18,16 @@ public class Tag extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tagId;
 
-    private String name;
+    private String tagName;
 
     public static Tag from(TagDto tagDto) {
         return Tag.builder()
-                .name(tagDto.getName())
+                .tagName(tagDto.getTagName())
                 .build();
     }
 
     public void update(TagDto tagDto) {
-        this.name = tagDto.getName();
+        this.tagName = tagDto.getTagName();
     }
 }
 

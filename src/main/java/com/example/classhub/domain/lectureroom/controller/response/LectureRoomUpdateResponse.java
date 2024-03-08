@@ -15,7 +15,7 @@ public class LectureRoomUpdateResponse {
     private boolean onOff;
 
     public LectureRoomUpdateResponse(LectureRoomDto lectureRoomDto) {
-        this.name = lectureRoomDto.getName();
+        this.name = lectureRoomDto.getLectureRoomName();
         this.taInviteCode = lectureRoomDto.getTaInviteCode();
         this.stInviteCode = lectureRoomDto.getStInviteCode();
         this.onOff = lectureRoomDto.isOnOff();

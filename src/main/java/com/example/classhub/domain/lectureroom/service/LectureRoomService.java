@@ -5,6 +5,7 @@ import com.example.classhub.domain.lectureroom.controller.response.LectureRoomLi
 import com.example.classhub.domain.lectureroom.controller.response.LectureRoomResponse;
 import com.example.classhub.domain.lectureroom.dto.LectureRoomDto;
 import com.example.classhub.domain.lectureroom.repository.LectureRoomRepository;
+import com.example.classhub.domain.tag.repository.TagRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

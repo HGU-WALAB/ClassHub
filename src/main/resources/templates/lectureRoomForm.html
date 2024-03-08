@@ -7,11 +7,14 @@
 <body>
 <h1>강의실 생성 폼</h1>
 <form action="#" th:action="@{/lecture-room/saveLecture}" th:object="${lectureRoom}" method="post">
-    <label for="name">강의실 이름:</label>
-    <input type="text" id="name" th:field="*{name}">
+    <label for="lectureRoomName">강의실 이름:</label>
+    <input type="text" id="lectureRoomName" th:field="*{lectureRoomName}">
     <br>
     <label for="onOff">강의실 상태:</label>
     <input type="checkbox" id="onOff" th:field="*{onOff}">
+    <br>
+    <label for="tagName">태그 이름:</label>
+    <input type="text" id="tagName" th:field="*{tagName}">
     <br>
     <button type="submit">저장</button>
 </form>

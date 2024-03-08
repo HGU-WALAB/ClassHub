@@ -5,6 +5,8 @@ import com.example.classhub.domain.lectureroom.controller.request.LectureRoomUpd
 import com.example.classhub.domain.lectureroom.controller.response.LectureRoomListResponse;
 import com.example.classhub.domain.lectureroom.dto.LectureRoomDto;
 import com.example.classhub.domain.lectureroom.service.LectureRoomService;
+import com.example.classhub.domain.tag.dto.TagDto;
+import com.example.classhub.domain.tag.service.TagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin("*")
 public class LectureRoomController {
     private final LectureRoomService lectureRoomService;
+    private final TagService tagService;
 
     @GetMapping("/lecture-room/lectureRoomForm")
     public String createLectureRoomFrom(Model model){
@@ -24,6 +27,7 @@ public class LectureRoomController {
     @PostMapping("/lecture-room/saveLecture")
     public String createLectureRoom(@ModelAttribute("lectureRoom") LectureRoomCreateRequest request){
         lectureRoomService.createLectureRoom(LectureRoomDto.from(request));
+        tagService.createTag(TagDto.from(request));
         return "redirect:/lecture-room";
     }
 

@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class LectureRoomCreateResponse {
-    private String name;
+    private String lectureRoomName;
     private String taInviteCode;
     private String stInviteCode;
     private boolean onOff;
 
     public LectureRoomCreateResponse(LectureRoomDto lectureRoomDto) {
-        this.name = lectureRoomDto.getName();
+        this.lectureRoomName = lectureRoomDto.getLectureRoomName();
         this.taInviteCode = lectureRoomDto.getTaInviteCode();
         this.stInviteCode = lectureRoomDto.getStInviteCode();
         this.onOff = lectureRoomDto.isOnOff();

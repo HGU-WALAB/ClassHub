@@ -14,20 +14,22 @@ import lombok.NoArgsConstructor;
 @Getter
 public class LectureRoomDto {
     private Long lectureRoomId;
-    private String name;
+    private String lectureRoomName;
     private String taInviteCode;
     private String stInviteCode;
     private boolean onOff;
+    private String tagName;
 
     public static LectureRoomDto from(LectureRoomCreateRequest request) {
         return LectureRoomDto.builder()
-                .name(request.getName())
+                .lectureRoomName(request.getLectureRoomName())
                 .onOff(request.isOnOff())
+//                .tagName(request.getTagName())
                 .build();
     }
     public static LectureRoomDto from(LectureRoomUpdateRequest request) {
         return LectureRoomDto.builder()
-                .name(request.getName())
+                .lectureRoomName(request.getLectureRoomName())
                 .onOff(request.isOnOff())
                 .build();
     }
@@ -35,7 +37,7 @@ public class LectureRoomDto {
     public static LectureRoomDto from(LectureRoom lectureRoom){
         return LectureRoomDto.builder()
                 .lectureRoomId(lectureRoom.getLectureRoomId())
-                .name(lectureRoom.getName())
+                .lectureRoomName(lectureRoom.getLectureRoomName())
                 .taInviteCode(lectureRoom.getTaInviteCode())
                 .stInviteCode(lectureRoom.getStInviteCode())
                 .onOff(lectureRoom.isOnOff())

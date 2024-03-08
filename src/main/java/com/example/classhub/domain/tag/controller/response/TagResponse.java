@@ -13,6 +13,6 @@ public class TagResponse {
 
     public TagResponse(Tag tag){
         this.tagId = tag.getTagId();
-        this.name = tag.getName();
+        this.name = tag.getTagName();
     }
 }
