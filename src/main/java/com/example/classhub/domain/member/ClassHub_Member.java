@@ -4,13 +4,16 @@ import com.example.classhub.domain.BaseEntity;
 import com.example.classhub.domain.member.dto.MemberDto;
 import com.example.classhub.domain.memberlroom.ClassHub_MemberLRoom;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

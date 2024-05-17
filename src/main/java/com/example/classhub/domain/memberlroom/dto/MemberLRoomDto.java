@@ -2,7 +2,6 @@ package com.example.classhub.domain.memberlroom.dto;
 
 import com.example.classhub.domain.memberlroom.ClassHub_MemberLRoom;
 import com.example.classhub.domain.memberlroom.controller.request.MemberLRoomCreateRequest;
-import com.example.classhub.domain.memberlroom.controller.request.MemberLRoomMemberCreateRequest;
 import lombok.*;
 
 @Getter
@@ -29,12 +28,6 @@ public class MemberLRoomDto {
       .role(classHubMemberLRoom.getRole())
       .permission(classHubMemberLRoom.getPermission())
       .build();
-  }
-
-  public static MemberLRoomDto from(MemberLRoomMemberCreateRequest memberLRoomMemberCreateRequest){
-    return MemberLRoomDto.builder()
-//            .memberLRoomId(memberLRoomMemberCreateRequest.getUniqueId());
-            .build();
   }
 
 
