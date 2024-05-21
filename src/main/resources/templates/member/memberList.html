@@ -453,6 +453,39 @@
                                             }, 2000); // 2초(2000밀리초) 후에 숨김
                                         }
                                     });
+                                    $(document).ready(function(){
+                                        $('.dropdown-menu a').on('click', function(){
+                                            var text = $(this).text();
+                                            $(this).closest('.dropdown').find('button').text(text);
+                                        });
+                                        // 역할 필터링
+                                        $('.role-filter').on('click', function(){
+                                            var selectedRole = $(this).data('role');
+                                            $('tbody tr').each(function(){
+                                                var role = $(this).find('.role-select').val();
+                                                if(selectedRole === '' || role === selectedRole){
+                                                    $(this).show();
+                                                } else {
+                                                    $(this).hide();
+                                                }
+                                            });
+                                        });
+
+                                        // 권한 필터링
+                                        $('.permission-filter').on('click', function(){
+                                            var selectedPermission = $(this).data('permission');
+                                            $('tbody tr').each(function(){
+                                                var permission = $(this).find('.permission-select').val();
+                                                if(selectedPermission === '' || permission === selectedPermission){
+                                                    $(this).show();
+                                                } else {
+                                                    $(this).hide();
+                                                }
+                                            });
+                                        });
+                                    });
+
+
                                 </script>
                             </div>
                          </div>
