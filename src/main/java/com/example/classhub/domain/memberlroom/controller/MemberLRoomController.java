@@ -58,14 +58,12 @@ public class MemberLRoomController {
 
   // 해당 강의실에 입장한 멤버만 불러오기
   @GetMapping("/lecture-room/member/info/{lectureRoomId}")
-  public String listMemberLRooms(@PathVariable Long lectureRoomId, Model model,
-                                 @RequestParam(value = "page", defaultValue = "0") int page) {
+  public String listMemberLRooms(@PathVariable Long lectureRoomId, Model model) {
     LectureRoomDto lectureRoomDto = lectureRoomService.findByRoomId(lectureRoomId);
     model.addAttribute("lectureRoom", lectureRoomDto);
 
-    Page<ClassHub_MemberLRoom> classHub_memberLRoomPageList = memberLRoomService.findMembersByLRoomId(lectureRoomId, page);
-    model.addAttribute("memberLRooms", classHub_memberLRoomPageList);
-    model.addAttribute("maxPage", 5);
+    List<ClassHub_MemberLRoom> classHub_memberLRoomList = memberLRoomService.findMembersByLRoomId(lectureRoomId);
+    model.addAttribute("memberLRooms", classHub_memberLRoomList);
 
     TagListResponse tagListResponse = tagService.getTagListByLectureId(lectureRoomId);
     model.addAttribute("tags", tagListResponse.getTags());
@@ -92,7 +90,7 @@ public class MemberLRoomController {
     } catch (Exception e) {
       redirectAttributes.addFlashAttribute("error", "학생 추가에 실패했습니다: " + e.getMessage());
     }
-    return "member/memberList";
+    return "redirect:/lecture-room/member/info/" + lectureRoomId;
   }
 
   // Read One
@@ -119,7 +117,6 @@ public class MemberLRoomController {
   public String updateMemberLRoomRole(@RequestParam("id") Long id, @RequestParam("index") Long index, @ModelAttribute ClassHub_MemberLRoom classHubMemberLRoom, RedirectAttributes redirectAttributes) {
     // 역할 업데이트 로직 구현
     Optional<ClassHub_MemberLRoom> classHub_memberLRoomOptional = memberLRoomService.findById(id);
-    String page = String.valueOf((index - 1) / 7);
     String lRoomId = null;
     if (classHub_memberLRoomOptional.isPresent()) {
       lRoomId = classHub_memberLRoomOptional.get().getLectureRoom().getLRoomId().toString();
@@ -130,14 +127,13 @@ public class MemberLRoomController {
     } else {
       redirectAttributes.addAttribute("status", false);
     }
-    return "redirect:/lecture-room/member/info/" + lRoomId + "?page=" + page;
+    return "redirect:/lecture-room/member/info/" + lRoomId;
   }
 
   @PostMapping("/memberlroom/update/permission")
   public String updateMemberLRoomPermission(@RequestParam("id") Long id, @RequestParam("index") Long index, @ModelAttribute ClassHub_MemberLRoom classHubMemberLRoom, RedirectAttributes redirectAttributes) {
     // 역할 업데이트 로직 구현
     Optional<ClassHub_MemberLRoom> classHub_memberLRoomOptional = memberLRoomService.findById(id);
-    String page = String.valueOf((index - 1) / 7);
     String lRoomId = null;
     if (classHub_memberLRoomOptional.isPresent()) {
       lRoomId = classHub_memberLRoomOptional.get().getLectureRoom().getLRoomId().toString();
@@ -148,7 +144,7 @@ public class MemberLRoomController {
     } else {
       redirectAttributes.addAttribute("status", false);
     }
-    return "redirect:/lecture-room/member/info/" + lRoomId + "?page=" + page;
+    return "redirect:/lecture-room/member/info/" + lRoomId;
   }
   // Delete
   @PostMapping("/memberlroom/delete/{lectureRoomId}/{uniqueId}")
