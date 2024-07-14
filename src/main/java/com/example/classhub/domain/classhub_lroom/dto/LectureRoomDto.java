@@ -3,6 +3,7 @@ package com.example.classhub.domain.classhub_lroom.dto;
 import com.example.classhub.domain.classhub_lroom.ClassHub_LRoom;
 import com.example.classhub.domain.classhub_lroom.controller.request.LectureRoomCreateRequest;
 import com.example.classhub.domain.classhub_lroom.controller.request.LectureRoomUpdateRequest;
+import com.example.classhub.domain.member.dto.MemberDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,19 +18,22 @@ public class LectureRoomDto {
     private String roomName;
     private String taInviteCode;
     private String stInviteCode;
+    private String creator;
     private String description;
     private boolean onOff;
     private String studentInfoKey;
     private int memberCount;
 
-    public static LectureRoomDto from(LectureRoomCreateRequest request) {
+    public static LectureRoomDto from(LectureRoomCreateRequest request, MemberDto memberDto) {
         return LectureRoomDto.builder()
                 .roomName(request.getRoomName())
                 .description(request.getDescription())
+                .creator(memberDto.getMember_name())
                 .onOff(request.isOnOff())
                 .studentInfoKey(request.getStudentInfoKey())
                 .build();
     }
+
     public static LectureRoomDto from(LectureRoomUpdateRequest request) {
         return LectureRoomDto.builder()
                 .roomName(request.getRoomName())

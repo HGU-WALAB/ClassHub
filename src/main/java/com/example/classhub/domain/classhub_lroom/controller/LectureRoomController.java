@@ -53,8 +53,9 @@ public class LectureRoomController {
     public String createLectureRoom(@ModelAttribute("lectureRoom") LectureRoomCreateRequest request,
                                     @RequestParam("studentFile") MultipartFile studentFile,
                                     HttpSession session) {
-        LectureRoomDto lectureRoomDto = lectureRoomService.createLectureRoom(LectureRoomDto.from(request));
         MemberDto member = (MemberDto) session.getAttribute("member");
+        LectureRoomDto lectureRoomDto = lectureRoomService.createLectureRoom(LectureRoomDto.from(request, member));
+
 
         memberLRoomService.createMemberLRoom(lectureRoomDto.getLectureRoomId(), member.getMemberId());
         if(studentFile != null && !studentFile.isEmpty())
