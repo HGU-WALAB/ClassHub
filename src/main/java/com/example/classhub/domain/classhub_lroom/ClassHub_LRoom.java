@@ -48,6 +48,7 @@ public class ClassHub_LRoom extends BaseEntity {
                 .roomName(lectureRoomDto.getRoomName())
                 .taInviteCode(taInviteCode)
                 .stInviteCode(stInviteCode)
+                .creator(lectureRoomDto.getCreator())
                 .description(lectureRoomDto.getDescription())
                 .onOff(lectureRoomDto.isOnOff())
                 .studentInfoKey(lectureRoomDto.getStudentInfoKey())
