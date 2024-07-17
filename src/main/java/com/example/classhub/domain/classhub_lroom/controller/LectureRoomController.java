@@ -14,6 +14,7 @@ import com.example.classhub.domain.tag.controller.response.TagListResponse;
 import com.example.classhub.domain.tag.service.TagService;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +62,20 @@ public class LectureRoomController {
         if(studentFile != null && !studentFile.isEmpty())
             memberLRoomService.createMemberLRoom(lectureRoomDto.getLectureRoomId(), studentFile);
         return "redirect:/lecture-room";
+    }
+
+    @GetMapping("/lecture-room/verifyInviteCode")
+    public ResponseEntity<Boolean> verifyInviteCode(@RequestParam String inviteCode, @RequestParam Long lectureRoomId, HttpSession session) {
+        System.out.println("Controller invite code = " + inviteCode);
+        MemberDto memberDto = (MemberDto) session.getAttribute("member");
+        LectureRoomDto lectureRoomDto = lectureRoomService.findLRoomDtoByRoomId(lectureRoomId);
+        try {
+            boolean isValid = lectureRoomService.verifyInviteCode(lectureRoomId, inviteCode);
+            memberLRoomService.createMemberByOne(lectureRoomDto, memberDto, inviteCode);
+            return ResponseEntity.ok(isValid);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(false);
+        }
     }
 
     @GetMapping("/lecture-room/detail/{lectureRoomId}")

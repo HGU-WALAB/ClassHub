@@ -198,16 +198,15 @@
                                 <p class="card-text text-muted mt-2" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" th:text="${lectureRoom.description}"></p>
                                 <p class="card-text text-muted mt-2" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                     현재 강의실 인원: <span th:text="${lectureRoom.memberCount}">0</span> 명
-                                </p><!--                                <a th:href="@{/lecture-room/detail/{lectureRoomId}(lectureRoomId=${lectureRoom.lectureRoomId})}" class="btn btn-primary btn-sm align-self-end" style="background: #425de3; border-color: #425de3;">강의실 입장</a>-->
+                                </p>
                                 <a th:if="${param.searchKeyword}"
-                                   th:href="@{/lecture-room/detail/{lectureRoomId}(lectureRoomId=${lectureRoom.lectureRoomId}, searchKeyword=${param.searchKeyword})}"
+                                th:onclick="'openInviteCodeModal(' + ${lectureRoom.lectureRoomId} + ');'"
                                    class="btn btn-primary btn-sm align-self-end"
                                    style="background: #425de3; border-color: #425de3;">강의실 입장</a>
                                 <a th:unless="${param.searchKeyword}"
-                                   th:href="@{/lecture-room/detail/{lectureRoomId}(lectureRoomId=${lectureRoom.lectureRoomId})}"
+                                th:onclick="'openInviteCodeModal(' + ${lectureRoom.lectureRoomId} + ');'"
                                    class="btn btn-primary btn-sm align-self-end"
                                    style="background: #425de3; border-color: #425de3;">강의실 입장</a>
-
                             </div>
                         </div>
                     </div>
@@ -307,7 +306,34 @@
         </div>
     </div>
 </div>
-
+<!-- 강의실 입장 버튼 클릭 시 inviteCode 입력 모달 -->
+<div class="modal fade" id="inviteCodeModal" tabindex="-1" aria-labelledby="inviteCodeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inviteCodeModalLabel">초대 코드 입력</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="inviteCodeForm">
+                    <div class="form-group">
+                        <label for="inviteCode">초대 코드</label>
+                        <input type="text" class="form-control" id="inviteCode" required>
+                        <input type="hidden" id="selectedLectureRoomId">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-primary" onclick="submitInviteCode(event)">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Bootstrap core JavaScript-->
 <script src="/ClassHub/bootstrap/vendor/jquery/jquery.min.js"></script>
 <script src="/ClassHub/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -345,6 +371,44 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    }
+
+    // 강의실 입장 버튼 클릭 시 inviteCode 입력 모달 띄우기
+    function openInviteCodeModal(lectureRoomId) {
+        $('#selectedLectureRoomId').val(lectureRoomId);
+        $('#inviteCodeModal').modal('show');
+    }
+
+    function submitInviteCode(event) {
+        event.preventDefault();
+        const inviteCode = $('#inviteCode').val();
+        const lectureRoomId = $('#selectedLectureRoomId').val();
+
+        if (inviteCode.trim() === "") {
+            alert("초대 코드를 입력하세요.");
+            return;
+        }
+
+        $.ajax({
+            url: "/ClassHub/lecture-room/verifyInviteCode",
+            type: "GET",
+            data: {
+                lectureRoomId: lectureRoomId,
+                inviteCode: inviteCode
+            },
+            success: function(data) {
+                if (data) {
+                    $('#inviteCodeModal').modal('hide');
+                    window.location.href = `lecture-room/detail/${lectureRoomId}`;
+                } else {
+                    alert("초대 코드가 유효하지 않습니다.");
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error details:", xhr, status, error);
+                alert("초대 코드 확인 중 오류가 발생했습니다.");
+            }
+        });
     }
 </script>
 </body>
