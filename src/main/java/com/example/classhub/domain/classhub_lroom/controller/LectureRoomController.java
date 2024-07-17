@@ -71,7 +71,9 @@ public class LectureRoomController {
         LectureRoomDto lectureRoomDto = lectureRoomService.findLRoomDtoByRoomId(lectureRoomId);
         try {
             boolean isValid = lectureRoomService.verifyInviteCode(lectureRoomId, inviteCode);
-            memberLRoomService.createMemberByOne(lectureRoomDto, memberDto, inviteCode);
+            if (isValid) {
+                memberLRoomService.createMemberByOne(lectureRoomDto, memberDto, inviteCode);
+            }
             return ResponseEntity.ok(isValid);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(false);
