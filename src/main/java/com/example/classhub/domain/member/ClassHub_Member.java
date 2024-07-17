@@ -44,4 +44,8 @@ public class ClassHub_Member extends BaseEntity {
         this.uniqueId = memberDto.getUniqueId();
     }
 
+    public void updateEmail(MemberDto memberDto) {
+        this.email = memberDto.getEmail();
+    }
+
 }
