@@ -45,4 +45,13 @@ public class DataStatisticResponse {
 
         System.out.println("getLectureRoom" + detail.getTag().getLectureRoom().getRoomName());
     }
+
+    @Override
+    public String toString() {
+        return "DataStatisticResponse{" +
+                "tagId=" + tagId +
+                ", score=" + score +
+                ", studentNum='" + studentNum + '\'' +
+                '}';
+    }
 }

@@ -116,14 +116,13 @@
       </a>
       <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-          <div id="LRList">
-            <div id="LRContainer" th:each="myLectureRoom : ${myLectureRooms}">
-              <div class="collapse-item d-flex align-items-center justify-content-between">
-                <div class="LRNameDiv">
-                  <a class="item" th:id="'LRItem_' + ${myLectureRoom.lectureRoomId}" th:href="@{${myLectureRoom.role == 'STUDENT' ? '/student/'+uniqueId : '/lecture-room/detail/'} + ${myLectureRoom.lectureRoomId}}" th:text="${myLectureRoom.roomName}" style="text-decoration: none; color: inherit;"></a>
-                </div>
-              </div>
-            </div>
+          <div id="LRContainer" th:each="myLectureRoom : ${myLectureRooms}">
+            <a class="collapse-item d-flex align-items-center justify-content-between item"
+               th:id="'LRItem_' + ${myLectureRoom.lectureRoomId}"
+               th:href="@{${myLectureRoom.role == 'STUDENT' ? '/student/'+uniqueId : '/lecture-room/detail/'} + ${myLectureRoom.lectureRoomId}}"
+               style="text-decoration: none; color: inherit;">
+              <div th:text="${myLectureRoom.roomName}"></div>
+            </a>
           </div>
         </div>
       </div>
@@ -208,7 +207,7 @@
       <div class="container-fluid">
         <!-- Page Heading -->
         <div id="whichLR_data" style="width:70%; margin:15px auto; display: none; min-width:300px; max-width:800px;">
-          <h1 class="h3 mb-4 text-gray-800" th:text="'< '+${lectureRoom.roomName} + ' > 나의 데이터 요약'"></h1>
+          <h1 class="h3 mb-4 text-gray-800" th:text="'< '+${lectureRoom.roomName} + ' > 나의 데이터 모아보기'"></h1>
         </div>
 
         <div style="width:70%; max-width:800px; margin:15px auto;">
@@ -219,13 +218,63 @@
           <img src="/ClassHub/img/noDataImage.png" style="width: 50%; height: 50%;">
         </div>
 
+
+
+        <script th:inline="javascript">
+          /*<![CDATA[*/
+          document.addEventListener("DOMContentLoaded", function() {
+            var matchedStudentDetails = [[${matchedStudentDetails}]];
+            var nullScoreTagIds = matchedStudentDetails.filter(function(score) {
+              return score.score === null;
+            }).map(function(score) {
+              return score.tagId;
+            });
+
+            nullScoreTagIds.forEach(function(tagId) {
+              var canvas = document.getElementById('myChart' + tagId);
+              if (canvas) {
+                canvas.style.display = 'none';
+              }
+            });
+
+            var groupedByTagId = matchedStudentDetails.reduce(function(acc, detail) {
+              var date = new Date(detail.modDate);
+              var year = date.getFullYear();
+              var month = (date.getMonth() + 1).toString().padStart(2, '0');
+              var day = date.getDate().toString().padStart(2, '0');
+              var formattedDate = `${year}-${month}-${day}`;
+              acc[detail.tagId] = formattedDate;
+              return acc;
+            }, {});
+
+            Object.keys(groupedByTagId).forEach(function(tagId) {
+              var modDateElement = document.getElementById('modDate-' + tagId);
+              if (modDateElement) {
+                modDateElement.textContent = `( 최근 업데이트일: ${groupedByTagId[tagId]} )`;
+              }
+            });
+
+            var myScores = matchedStudentDetails.map(function(detail) {
+              return {score: detail.score, modDate: detail.modDate, tagId: detail.tagId};
+            });
+
+            if (myScores.length !== 0) {
+              document.getElementById('scoreChart').style.display = 'block';
+              document.getElementById('whichLR_data').style.display = 'block';
+              document.getElementById('accordionPanelsStayOpenExample').style.display = 'block';
+              document.getElementById('noScoresMessage').style.display = 'none';
+            }
+          });
+          /*]]>*/
+        </script>
+
         <div class="accordion" id="accordionPanelsStayOpenExample" style="min-width:300px; max-width:800px; width: 70%; margin: 15px auto; display: none">
           <div class="accordion" style="margin: 15px auto;">
             <div th:each="tag, iterStat : ${tags.tags}" class="accordion-item">
               <h2 class="accordion-header d-flex justify-content-between" th:id="'heading' + ${iterStat.index}">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${iterStat.index}" aria-expanded="false" th:aria-controls="'collapse' + ${iterStat.index}" style="display: flex; align-items: center;">
                   <span th:text="${tag.name}" style="font-weight: bold;"></span>
-                  <span th:id="'myScore-' + ${tag.tagId}" style="margin: 0 1rem;"></span>
+                    <span th:id="'myScore-' + ${tag.tagId}" style="margin: 0 1rem;"></span>
                   <span>
                     <small th:id="'modDate-' + ${tag.tagId}">최근 수정일: 로딩 중...</small>
                   </span>
@@ -233,7 +282,7 @@
               </h2>
               <div th:id="'collapse' + ${iterStat.index}" class="accordion-collapse collapse" th:aria-labelledby="'heading' + ${iterStat.index}">
                 <div class="accordion-body">
-                  <canvas th:id="'myChart' + ${tag.tagId}"></canvas>
+                    <canvas th:id="'myChart' + ${tag.tagId}"></canvas>
                   <!-- 아코디언 바디에 표시할 내용 -->
                   <div th:if="${statisticsByTagId.containsKey(tag.tagId)}">
                     <div class="stat-item"><span class="stat-value" th:text="${statisticsByTagId[tag.tagId].average}"></span><br><span class="stat-label">평균 점수</span></div>
@@ -262,6 +311,13 @@
             var matchedStudentDetails = [[${matchedStudentDetails}]];
             var myScores = matchedStudentDetails.map(function(detail) {
               return {score: detail.score,modDate: detail.modDate, tagId: detail.tagId};
+            });
+
+            // score가 null인 경우의 tagId를 저장하는 배열
+            var nullScoreTagIds = matchedStudentDetails.filter(function(score) {
+              return score.score === null;
+            }).map(function(score) {
+              return score.tagId;
             });
 
             var groupedByTagId = matchedStudentDetails.reduce(function(acc, detail) {
@@ -295,15 +351,25 @@
             });
 
             var statisticsByTagId = [[${statisticsByTagId}]];
-            var averages = Object.values(statisticsByTagId).map(function(stat) {
-              return stat.average;
-            });
+            var averages = Object.entries(statisticsByTagId)
+                    .filter(function([tagId, stat]) {
+                      return !nullScoreTagIds.includes(tagId);
+                    })
+                    .map(function([tagId, stat]) {
+                      return stat.average;
+                    });
+
 
             var tags = [[${tags}]];
-            console.log(tags);
-            var tagNames = tags.tags.map(function(tag) {
-              return tag.name;
-            });
+
+            var tagNames = tags.tags
+                    .filter(function(tag) {
+                      return !nullScoreTagIds.includes(tag.tagId);
+                    })
+                    .map(function(tag) {
+                      return tag.name;
+                    });
+
             var tagPerfectScores = tags.tags.map(function(tag) {
               return tag.perfectScore;
             });
@@ -323,7 +389,9 @@
                   borderWidth: 1
                 }, {
                   label: '나의 점수',
-                  data: myScores.map(function(score) {
+                  data: myScores.filter(function(score) {
+                    return score.score !== null;
+                  }).map(function(score) {
                     return score.score;
                   }),
                   backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -341,110 +409,122 @@
               }
             });
             /*]]>*/
-          </script>
-
-          <script th:inline="javascript">
-          /*<![CDATA[*/
           var dataDetails = [[${dataDetails}]]; // 데이터 세부사항
 
-          var scoresByTagId = dataDetails.reduce(function(acc, currentValue) {
-            if (!acc[currentValue.tagId]) {
-              acc[currentValue.tagId] = [];
-            }
-            acc[currentValue.tagId].push(currentValue.score);
-            return acc;
-          }, {});
-
-          var extractedData = tags.tags.map(function(tag) {
-            return {tagId: tag.tagId, idealScore: tag.perfectScore}; // 변수명 변경
-          });
-
-          Object.keys(scoresByTagId).forEach(function(tagId) {
-            var tagData = extractedData.find(function(data) { // 변수명 변경
-              return data.tagId == tagId;
-            });
-
-            if (!tagData) {
-              console.warn(`Tag ID ${tagId}에 해당하는 idealScore를 찾을 수 없습니다.`);
-              return; // 다음 루프로 넘어갑니다.
-            }
-
-            var idealScore = tagData.idealScore; // 변수명 변경
-
-            var myScorePercentage = myScores.find(function(scoreP) {
-              return scoreP.tagId == tagId;
-            }).score / idealScore * 100; // 변수명 변경
-
-            var percentages = scoresByTagId[tagId].map(function(score) {
-              return (score / idealScore) * 100; // 변수명 변경
-            });
-
-            // 구간 별 학생 수를 계산합니다.
-            var rangeCounts = Array(10).fill(0); // 0%~10%, 11%~20%, ..., 91%~100%
-            percentages.forEach(function(pct) {
-              if (pct === 100) {
-                rangeCounts[9]++;
-              } else {
-                var index = Math.floor(pct / 10);
-                rangeCounts[index]++;
+            // nullScoreTagIds 배열에 포함된 tagId와 겹치는 항목은 생성하지 않도록 필터링
+            var scoresByTagId = dataDetails.reduce(function(acc, currentValue) {
+              // nullScoreTagIds에 포함된 tagId는 건너뜀
+              if (nullScoreTagIds.includes(currentValue.tagId)) {
+                return acc;
               }
-            });
 
-            // 나의 점수가 속하는 구간을 찾습니다.
-            var myScoreIndex = myScorePercentage === 100 ? 9 : Math.floor(myScorePercentage / 10);
+              if (!acc[currentValue.tagId]) {
+                acc[currentValue.tagId] = [];
+              }
+              acc[currentValue.tagId].push(currentValue.score);
+              return acc;
+            }, {});
+            console.log(scoresByTagId);
 
-            var distributionDataset = {
-              label: '점수 분포',
-              data: rangeCounts,
-              backgroundColor: rangeCounts.map((_, index) =>
-                index === myScoreIndex ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)'
-              ),
-              borderColor: rangeCounts.map((_, index) =>
-                index === myScoreIndex ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)'
-              ),
-              borderWidth: 1,
-              type: 'bar'
-            };
 
-            var myScoreLabel = {
-              label: '나의 점수',
-              backgroundColor: 'rgba(255, 99, 132, 0.2)',
-              borderColor: 'rgba(255, 99, 132, 1)',
-              type: 'bubble',
-            }
+            var extractedData = tags.tags
+                    .filter(function(tag) {
+                      return !nullScoreTagIds.includes(tag.tagId);
+                    })
+                    .map(function(tag) {
+                      return {tagId: tag.tagId, idealScore: tag.perfectScore};
+                    });
 
-            // 그래프를 그립니다.
-            var ctx = document.getElementById('myChart' + tagId).getContext('2d');
-            var mixedChart = new Chart(ctx, {
-              data: {
-                labels: Array.from({length: 10}, (_, i) => `${i*10+1}~${i*10+10}`), // X 축 레이블 수정
-                datasets: [distributionDataset, myScoreLabel]
-              },
-              options: {
-                scales: {
-                  x: {
-                    display: true,
-                    title: {
-                      display: true,
-                      text: '점수 범위 (%)'
-                    }
+
+            Object.keys(scoresByTagId).forEach(function(tagId) {
+              if (nullScoreTagIds.includes(tagId)) {
+                return;
+              }
+              var tagData = extractedData.find(function(data) { // 변수명 변경
+                return data.tagId == tagId;
+              });
+
+              if (!tagData) {
+                console.warn(`Tag ID ${tagId}에 해당하는 idealScore를 찾을 수 없습니다.`);
+                return; // 다음 루프로 넘어갑니다.
+              }
+
+              var idealScore = tagData.idealScore; // 변수명 변경
+
+              var myScorePercentage = myScores.find(function(scoreP) {
+                return scoreP.tagId == tagId;
+              }).score / idealScore * 100; // 변수명 변경
+
+              var percentages = scoresByTagId[tagId].map(function(score) {
+                return (score / idealScore) * 100; // 변수명 변경
+              });
+
+              // 구간 별 학생 수를 계산합니다.
+              var rangeCounts = Array(10).fill(0); // 0%~10%, 11%~20%, ..., 91%~100%
+              percentages.forEach(function(pct) {
+                if (pct === 100) {
+                  rangeCounts[9]++;
+                } else {
+                  var index = Math.floor(pct / 10);
+                  rangeCounts[index]++;
+                }
+              });
+
+              // 나의 점수가 속하는 구간을 찾습니다.
+              var myScoreIndex = myScorePercentage === 100 ? 9 : Math.floor(myScorePercentage / 10);
+
+                var distributionDataset = {
+                  label: '점수 분포',
+                  data: rangeCounts,
+                  backgroundColor: rangeCounts.map((_, index) =>
+                          index === myScoreIndex ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)'
+                  ),
+                  borderColor: rangeCounts.map((_, index) =>
+                          index === myScoreIndex ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)'
+                  ),
+                  borderWidth: 1,
+                  type: 'bar'
+                };
+
+                var myScoreLabel = {
+                  label: '나의 점수',
+                  backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                  borderColor: 'rgba(255, 99, 132, 1)',
+                  type: 'bubble',
+                }
+
+                // 그래프를 그립니다.
+                var ctx = document.getElementById('myChart' + tagId).getContext('2d');
+                var mixedChart = new Chart(ctx, {
+                  data: {
+                    labels: Array.from({length: 10}, (_, i) => `${i * 10 + 1}~${i * 10 + 10}`), // X 축 레이블 수정
+                    datasets: [distributionDataset, myScoreLabel]
                   },
-                  y: {
-                    beginAtZero: true,
-                    suggestedMax: Math.max(...rangeCounts) + 1, // Y축 최대값 조정
-                    title: {
-                      display: true,
-                      text: '인원 수'
-                    },
-                    ticks: {
-                      callback: function(value) {
-                        return Number.isInteger(value) ? value : null; // 정수만 표시
+                  options: {
+                    scales: {
+                      x: {
+                        display: true,
+                        title: {
+                          display: true,
+                          text: '점수 범위 (%)'
+                        }
+                      },
+                      y: {
+                        beginAtZero: true,
+                        suggestedMax: Math.max(...rangeCounts) + 1, // Y축 최대값 조정
+                        title: {
+                          display: true,
+                          text: '인원 수'
+                        },
+                        ticks: {
+                          callback: function (value) {
+                            return Number.isInteger(value) ? value : null; // 정수만 표시
+                          }
+                        }
                       }
                     }
                   }
-                }
-              }
-            });
+              });
           });
 
 
@@ -464,16 +544,29 @@
             // 각 태그별 평균 점수 계산 및 표시
             tags.tags.forEach(tag => {
               var myAverageScore = tagScores[tag.tagId] ? tagScores[tag.tagId].reduce((acc, score) => acc + score, 0) / tagScores[tag.tagId].length : 0;
+              if(myAverageScore !== 0){
+                var myScoreElement = document.getElementById('myScore-' + tag.tagId);
 
-              var myScoreElement = document.getElementById('myScore-' + tag.tagId);
-
-              if (myScoreElement) {
-                myScoreElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="blue" class="bi bi-clipboard-check" viewBox="0 0 16 16">
+                if (myScoreElement) {
+                  myScoreElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="blue" class="bi bi-clipboard-check" viewBox="0 0 16 16">
                                               <path fill-rule="evenodd" d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
                                               <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
                                               <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
                                             </svg>
-                                            <span style="color: blue;">${myAverageScore.toFixed(1)}점</span>`;
+                                            <span style="color: black;">${myAverageScore}점</span>`;
+                }
+              }
+              else {
+                var myScoreElement = document.getElementById('myScore-' + tag.tagId);
+
+                if (myScoreElement) {
+                  myScoreElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="blue" class="bi bi-clipboard-check" viewBox="0 0 16 16">
+                                              <path fill-rule="evenodd" d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+                                              <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+                                              <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+                                            </svg>
+                                            <span style="color: black;">입력된 점수가 없습니다.</span>`;
+                }
               }
             });
           };
@@ -481,11 +574,8 @@
           window.onload = function() {
             calculateStatistics();
           };
-
           /*]]>*/
         </script>
-
-
       </div>
     </div>
   </div>
@@ -521,19 +611,6 @@
       <div class="modal-footer">
         <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
         <a class="btn btn-primary" href="/ClassHub/logout">로그아웃</a>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- LectureRoom Create Modal-->
-<div class="modal fade" id="LectureRoomCreateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">새로운 강의실 등록</h5>
-        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
       </div>
     </div>
   </div>
