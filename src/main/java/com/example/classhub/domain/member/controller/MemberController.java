@@ -3,6 +3,7 @@ package com.example.classhub.domain.member.controller;
 import com.example.classhub.domain.classhub_lroom.dto.LectureRoomDto;
 import com.example.classhub.domain.classhub_lroom.service.LectureRoomService;
 import com.example.classhub.domain.member.controller.request.MemberCreateRequest;
+import com.example.classhub.domain.member.controller.request.MemberEmailUpdateRequest;
 import com.example.classhub.domain.member.controller.response.MemberListResponse;
 import com.example.classhub.domain.member.dto.MemberDto;
 import com.example.classhub.domain.member.service.MemberService;
@@ -13,6 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpSession;
+import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,11 +37,6 @@ public class MemberController {
     return "/member";
   }
 
-//  @GetMapping("/login") // member form 보여주기
-//  public String createMemberForm(Model model){
-//    model.addAttribute("member", new LoginRequest());
-//    return "/member/login";
-//  }
 
   @PostMapping("/saveMember") // member 저장하기
   // TODO : hisnet login 연결
@@ -70,4 +69,9 @@ public class MemberController {
     return "redirect:/member";
   }
 
+  @PostMapping("/updateEmail/{memberId}") // member email 수정하기
+  public String updateEmail(@ModelAttribute("memberId") Long memberId, @ModelAttribute("member") MemberEmailUpdateRequest request){
+    memberService.updateEmail(memberId, MemberDto.from(request));
+    return "redirect:/lecture-room";
+  }
 }

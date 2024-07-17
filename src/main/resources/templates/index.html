@@ -170,9 +170,16 @@
                         <!-- Dropdown - User Information -->
                         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                              aria-labelledby="userDropdown">
+                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#updateEmailModal">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-person mr-2 text-gray-400" viewBox="0 0 16 16">
+                                <path d="M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                                <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2v9.255S12 12 8 12s-5 1.755-5 1.755V2a1 1 0 0 1 1-1h5.5z"/>
+                              </svg>
+                                개인정보
+                            </a>
                             <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                로그아웃
+                              <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                              로그아웃
                             </a>
                         </div>
                     </li>
@@ -300,13 +307,51 @@
                     <input type="file" id="studentFile" name="studentFile" class="form-control" style="display: none;">
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" data-dismiss="modal" style="background: #adb5bd; border-color: #adb5bd;">닫기</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">닫기</button>
                     <button type="submit" class="btn btn-primary" style="background: #2e59d9; border-color: #2e59d9;">저장</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+<div class="modal" id="updateEmailModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">이메일 수정</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <form id="emailUpdateForm" th:action="@{/updateEmail/{memberId}(memberId=${session.member.memberId})}" method="post">
+          <div class="form-group">
+            <label>이름: </label>
+            <span th:text="${session.member.member_name}"></span>
+          </div>
+          <div class="form-group">
+            <label>학번: </label>
+            <span th:text="${session.member.uniqueId}"></span>
+          </div>
+          <div class="form-group">
+            <label for="email">이메일: </label>
+            <input type="email" class="form-control" id="email" name="email" th:value="${session.member.email}" required>
+          </div>
+        </form>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+        <button type="submit" class="btn btn-primary" form="emailUpdateForm">수정하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 <!-- Bootstrap core JavaScript-->
 <script src="/ClassHub/bootstrap/vendor/jquery/jquery.min.js"></script>
@@ -346,6 +391,7 @@
         link.click();
         document.body.removeChild(link);
     }
+
 </script>
 </body>
 

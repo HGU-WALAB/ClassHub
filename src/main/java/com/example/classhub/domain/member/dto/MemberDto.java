@@ -4,6 +4,7 @@ package com.example.classhub.domain.member.dto;
 import com.example.classhub.domain.member.ClassHub_Member;
 import com.example.classhub.domain.member.controller.request.LoginRequest;
 import com.example.classhub.domain.member.controller.request.MemberCreateRequest;
+import com.example.classhub.domain.member.controller.request.MemberEmailUpdateRequest;
 import com.example.classhub.domain.member.controller.request.MemberUpdateRequest;
 import com.example.classhub.domain.memberlroom.controller.request.MemberLRoomMemberCreateRequest;
 import com.example.classhub.domain.memberlroom.dto.Permission;
@@ -48,6 +49,12 @@ public class MemberDto {
                 .email(request.getEmail())
                 .department(request.getDepartment())
                 .build();
+    }
+
+    public static MemberDto from(MemberEmailUpdateRequest request){
+      return MemberDto.builder()
+        .email(request.getEmail())
+        .build();
     }
 
     public static MemberDto from(ClassHub_Member classHubMember){
