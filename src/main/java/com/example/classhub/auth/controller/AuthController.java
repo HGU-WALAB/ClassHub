@@ -27,6 +27,9 @@ public class AuthController {
         }
 
         MemberDto memberDto = memberService.createMember(hisnetLoginService.callHisnetLoginApi(MemberDto.from(token)));
+        if (memberDto == null) {
+            return "redirect:/auth/login"; // 오류 페이지로 리디렉션
+        }
         model.addAttribute("member", memberDto);
         session.setAttribute("member", memberDto);
 
