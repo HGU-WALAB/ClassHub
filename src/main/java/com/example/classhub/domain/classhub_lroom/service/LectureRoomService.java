@@ -40,6 +40,14 @@ public class LectureRoomService {
         return LectureRoomDto.from(lectureRoom);
     }
     @Transactional
+    public boolean verifyInviteCode(Long lectureRoomId, String inviteCode) {
+        ClassHub_LRoom lectureRoom = lectureRoomRepository.findById(lectureRoomId).orElse(null);
+        System.out.println("input code = " + inviteCode);
+        System.out.println("lectureRoom.getTaInviteCode() = " + lectureRoom.getTaInviteCode());
+        System.out.println("lectureRoom.getStInviteCode() = " + lectureRoom.getStInviteCode());
+        return inviteCode.equals(lectureRoom.getStInviteCode()) || inviteCode.equals(lectureRoom.getTaInviteCode());
+    }
+    @Transactional
     public LectureRoomListResponse getLectureRoomList(Long memberId) {
         List<ClassHub_MemberLRoom> memberLRooms = memberLRoomRepository.findByClassHubMemberMemberId(memberId);
 
