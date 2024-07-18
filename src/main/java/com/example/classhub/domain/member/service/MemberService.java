@@ -94,5 +94,15 @@ public class MemberService {
       return MemberDto.from(classHubMember);
     }
 
+    @Transactional
+    public MemberDto updateEmail(Long memberId, MemberDto memberDto) {
+      ClassHub_Member classHubMember = memberRepository.findById(memberId)
+              .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
+      System.out.println("memberDto: " + memberDto);
+      classHubMember.updateEmail(memberDto);
+      memberRepository.save(classHubMember);
+      return MemberDto.from(classHubMember);
+    }
+
 
 }

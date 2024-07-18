@@ -5,7 +5,9 @@ import com.example.classhub.domain.classhub_lroom.controller.request.LectureRoom
 import com.example.classhub.domain.classhub_lroom.controller.response.LectureRoomListResponse;
 import com.example.classhub.domain.classhub_lroom.dto.LectureRoomDto;
 import com.example.classhub.domain.classhub_lroom.service.LectureRoomService;
+import com.example.classhub.domain.member.ClassHub_Member;
 import com.example.classhub.domain.member.dto.MemberDto;
+import com.example.classhub.domain.member.service.MemberService;
 import com.example.classhub.domain.memberlroom.dto.MemberLRoomDto;
 import com.example.classhub.domain.memberlroom.service.MemberLRoomService;
 import com.example.classhub.domain.post.controller.response.PostListResponse;
@@ -28,6 +30,7 @@ public class LectureRoomController {
     private final TagService tagService;
     private final PostService postService;
     private final MemberLRoomService memberLRoomService;
+    private final MemberService memberService;
 
     @GetMapping("/lecture-room")
     public String findLectureRoomList(Model model, @RequestParam(name = "searchKeyword", required = false, defaultValue = "")String searchKeyword, HttpSession session){
@@ -35,6 +38,7 @@ public class LectureRoomController {
         TagListResponse tagListResponse = tagService.getTagList();
 
         MemberDto memberDto = (MemberDto) session.getAttribute("member");
+        ClassHub_Member member = memberService.findByMemberId(memberDto.getMemberId());
         if (searchKeyword.isEmpty()){
             lectureRoomListResponse = lectureRoomService.getLectureRoomList(memberDto.getMemberId());
         }
@@ -43,6 +47,7 @@ public class LectureRoomController {
         }
         model.addAttribute("lectureRooms", lectureRoomListResponse.getLectureRooms());
         model.addAttribute("tags", tagListResponse.getTags());
+        model.addAttribute("member", member);
 
         // 강의실 생성 폼을 위한 모델
         model.addAttribute("lectureRoomCreateRequest", new LectureRoomCreateRequest());

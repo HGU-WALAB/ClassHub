@@ -170,39 +170,44 @@ public class DataDetailController {
           DecimalFormat df = new DecimalFormat("#.#");
 
           groupedByTagId.forEach((tagId, details) -> {
-            DoubleSummaryStatistics stats = details.stream()
-              .mapToDouble(DataStatisticResponse::getScore)
-              .summaryStatistics();
+              try {
+                  DoubleSummaryStatistics stats = details.stream()
+                          .mapToDouble(DataStatisticResponse::getScore)
+                          .summaryStatistics();
 
-            double average = Double.parseDouble(df.format(stats.getAverage()));
-            double max = Double.parseDouble(df.format(stats.getMax()));
-            double min = Double.parseDouble(df.format(stats.getMin()));
+                  double average = Double.parseDouble(df.format(stats.getAverage()));
+                  double max = Double.parseDouble(df.format(stats.getMax()));
+                  double min = Double.parseDouble(df.format(stats.getMin()));
 
-            // 표준편차 계산
-            double finalAverage = stats.getAverage();
-            double stddev = Math.sqrt(details.stream()
-              .mapToDouble(d -> Math.pow(d.getScore() - finalAverage, 2))
-              .average()
-              .orElse(0));
-            stddev = Double.parseDouble(df.format(stddev));
+                  // 표준편차 계산
+                  double finalAverage = stats.getAverage();
+                  double stddev = Math.sqrt(details.stream()
+                          .mapToDouble(d -> Math.pow(d.getScore() - finalAverage, 2))
+                          .average()
+                          .orElse(0));
+                  stddev = Double.parseDouble(df.format(stddev));
 
-            // 0점을 제외한 평균값 계산
-            double averageExcludingZero = details.stream()
-              .filter(d -> d.getScore() > 0)
-              .mapToDouble(DataStatisticResponse::getScore)
-              .average()
-              .orElse(0);
-            averageExcludingZero = Double.parseDouble(df.format(averageExcludingZero));
+                  // 0점을 제외한 평균값 계산
+                  double averageExcludingZero = details.stream()
+                          .filter(d -> d.getScore() > 0)
+                          .mapToDouble(DataStatisticResponse::getScore)
+                          .average()
+                          .orElse(0);
+                  averageExcludingZero = Double.parseDouble(df.format(averageExcludingZero));
 
-            // 결과 맵에 추가
-            Map<String, Double> statsMap = new HashMap<>();
-            statsMap.put("average", average);
-            statsMap.put("max", max);
-            statsMap.put("min", min);
-            statsMap.put("stddev", stddev);
-            statsMap.put("averageExcludingZero", averageExcludingZero);
+                  // 결과 맵에 추가
+                  Map<String, Double> statsMap = new HashMap<>();
+                  statsMap.put("average", average);
+                  statsMap.put("max", max);
+                  statsMap.put("min", min);
+                  statsMap.put("stddev", stddev);
+                  statsMap.put("averageExcludingZero", averageExcludingZero);
 
-            statisticsByTagId.put(tagId, statsMap);
+                  statisticsByTagId.put(tagId, statsMap);
+              } catch (Exception e) {
+                  // getScore()에서 에러가 발생한 경우 해당 tagId를 건너뜀
+                  System.err.println("Error processing tagId " + tagId + ": " + e.getMessage());
+              }
           });
 
           // 계산된 통계 정보를 모델에 추가

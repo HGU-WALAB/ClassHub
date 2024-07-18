@@ -93,17 +93,17 @@
       </a>
       <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-          <div id="LRList">
-            <div id="LRContainer" th:each="myLectureRoom : ${myLectureRooms}">
-              <div class="collapse-item d-flex align-items-center justify-content-between">
-                <div class="LRNameDiv">
-                  <a class="item" th:id="'LRItem_' + ${myLectureRoom.lectureRoomId}" th:href="@{${myLectureRoom.role == 'STUDENT' ? '/student/'+uniqueId : '/lecture-room/detail/'} + ${myLectureRoom.lectureRoomId}}" th:text="${myLectureRoom.roomName}" style="text-decoration: none; color: inherit;"></a>
-                </div>
-              </div>
-            </div>
+          <div id="LRContainer" th:each="myLectureRoom : ${myLectureRooms}">
+            <a class="collapse-item d-flex align-items-center justify-content-between item"
+               th:id="'LRItem_' + ${myLectureRoom.lectureRoomId}"
+               th:href="@{${myLectureRoom.role == 'STUDENT' ? '/student/'+uniqueId : '/lecture-room/detail/'} + ${myLectureRoom.lectureRoomId}}"
+               style="text-decoration: none; color: inherit;">
+              <div th:text="${myLectureRoom.roomName}"></div>
+            </a>
           </div>
         </div>
       </div>
+
     </li>
 
     <!-- Heading -->

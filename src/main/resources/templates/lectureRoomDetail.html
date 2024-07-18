@@ -198,17 +198,16 @@
           <span>나의 강의실</span>
         </a>
         <div id="collapseMyLectureRooms" class="collapse" aria-labelledby="headingMyLectureRooms" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <div id="LRList">
-              <div id="LRContainer" th:each="myLectureRoom : ${myLectureRooms}">
-                <div class="collapse-item d-flex align-items-center justify-content-between">
-                  <div class="LRNameDiv">
-                    <a class="item" th:id="'LRItem_' + ${myLectureRoom.lectureRoomId}" th:href="@{${myLectureRoom.role == 'STUDENT' ? '/student/'+uniqueId : '/lecture-room/detail/'} + ${myLectureRoom.lectureRoomId}}" th:text="${myLectureRoom.roomName}" style="text-decoration: none; color: inherit;"></a>
-                  </div>
+            <div class="bg-white py-2 collapse-inner rounded">
+                <div id="LRContainer" th:each="myLectureRoom : ${myLectureRooms}">
+                    <a class="collapse-item d-flex align-items-center justify-content-between item"
+                       th:id="'LRItem_' + ${myLectureRoom.lectureRoomId}"
+                       th:href="@{${myLectureRoom.role == 'STUDENT' ? '/student/'+uniqueId : '/lecture-room/detail/'} + ${myLectureRoom.lectureRoomId}}"
+                       style="text-decoration: none; color: inherit;">
+                        <div th:text="${myLectureRoom.roomName}"></div>
+                    </a>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
       </li>
 
@@ -413,7 +412,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">로그아웃하시겠습니까?</h5>
+                <h5 class="modal-title" id="logout">로그아웃하시겠습니까?</h5>
                 <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
