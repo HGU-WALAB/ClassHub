@@ -40,6 +40,16 @@ public class LectureRoomResponse {
         this.role = role;
         this.memberCount = memberCount;
     }
+    public LectureRoomResponse(ClassHub_LRoom lectureRoom, Long memberCount){
+        this.lectureRoomId = lectureRoom.getLRoomId();
+        this.roomName = lectureRoom.getRoomName();
+        this.taInviteCode = lectureRoom.getTaInviteCode();
+        this.stInviteCode = lectureRoom.getStInviteCode();
+        this.onOff = lectureRoom.isOnOff();
+        this.description = lectureRoom.getDescription();
+        this.studentInfoKey = lectureRoom.getStudentInfoKey();
+        this.memberCount = memberCount;
+    }
 
     public LectureRoomResponse(LectureRoomDto lectureRoomDto){
         this.lectureRoomId = lectureRoomDto.getLectureRoomId();
