@@ -13,5 +13,8 @@ public interface MemberLRoomRepository extends JpaRepository<ClassHub_MemberLRoo
     List<ClassHub_MemberLRoom> findByLectureRoom_lRoomId(Long lRoomId);
     ClassHub_MemberLRoom findByLectureRoom_lRoomIdAndClassHubMember_UniqueId(Long lRoomId, String uniqueId);
     List<ClassHub_MemberLRoom> findByClassHubMemberMemberId(Long memberId);
+
     Long countByLectureRoom_lRoomId(Long lRoomId);
+
+    List<ClassHub_MemberLRoom> findAllByLectureRoom_lRoomIdIn(List<Long> lRoomIds);
 }

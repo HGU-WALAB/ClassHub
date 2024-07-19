@@ -43,7 +43,7 @@ public class LectureRoomController {
             lectureRoomListResponse = lectureRoomService.getLectureRoomList(memberDto.getMemberId());
         }
         else{
-            lectureRoomListResponse = lectureRoomService.findByKeyword(searchKeyword);
+            lectureRoomListResponse = lectureRoomService.findByKeyword(searchKeyword, memberDto.getMemberId());
         }
         model.addAttribute("lectureRooms", lectureRoomListResponse.getLectureRooms());
         model.addAttribute("tags", tagListResponse.getTags());

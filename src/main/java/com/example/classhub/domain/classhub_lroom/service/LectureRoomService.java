@@ -6,6 +6,7 @@ import com.example.classhub.domain.classhub_lroom.controller.response.LectureRoo
 import com.example.classhub.domain.classhub_lroom.dto.LectureRoomDto;
 import com.example.classhub.domain.classhub_lroom.repository.LectureRoomRepository;
 import com.example.classhub.domain.memberlroom.ClassHub_MemberLRoom;
+import com.example.classhub.domain.memberlroom.dto.Role;
 import com.example.classhub.domain.memberlroom.repository.MemberLRoomRepository;
 import com.example.classhub.domain.tag.ClassHub_Tag;
 import com.example.classhub.domain.tag.repository.TagRepository;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -50,8 +52,6 @@ public class LectureRoomService {
     @Transactional
     public LectureRoomListResponse getLectureRoomList(Long memberId) {
         List<ClassHub_MemberLRoom> memberLRooms = memberLRoomRepository.findByClassHubMemberMemberId(memberId);
-
-
         List<LectureRoomResponse> lectureRoomResponses = memberLRooms.stream()
                 .filter(memberLRoom -> memberLRoom.getLectureRoom() != null && "APPROVED".equals(memberLRoom.getPermission().name()))
                 .map(memberLRoom -> new LectureRoomResponse(
@@ -63,11 +63,33 @@ public class LectureRoomService {
         return new LectureRoomListResponse(lectureRoomResponses);
     }
     @Transactional
-    public LectureRoomListResponse findByKeyword(String keyword) {
-        // 강의실 이름, 강의실 설명, 교수이름, 입장코드 중 하나라도 입력한 키워드와 일치하는 강의실 정보를 조회
+    public LectureRoomListResponse findByKeyword(String keyword, Long memberId) {
         List<ClassHub_LRoom> lectureRooms = lectureRoomRepository.findByTaInviteCodeOrStInviteCodeOrRoomNameOrDescriptionContainingOrCreator(keyword, keyword, keyword, keyword, keyword);
+        List<Long> lRoomIds = lectureRooms.stream()
+                .map(ClassHub_LRoom::getLRoomId)
+                .collect(Collectors.toList());
+        List<ClassHub_MemberLRoom> memberInLRooms = memberLRoomRepository.findAllByLectureRoom_lRoomIdIn(lRoomIds);
+
         List<LectureRoomResponse> lectureRoomResponses = lectureRooms.stream()
-                .map(LectureRoomResponse::new)
+                .map(lectureRoom -> {
+                    ClassHub_MemberLRoom memberLRoom = memberInLRooms.stream()
+                            .filter(mlr -> mlr.getLectureRoom().getLRoomId().equals(lectureRoom.getLRoomId()) &&
+                                    mlr.getClassHubMember().getMemberId().equals(memberId))
+                            .findFirst()
+                            .orElse(null);
+                    if (memberLRoom != null) {
+                        return new LectureRoomResponse(
+                                lectureRoom,
+                                memberLRoom.getRole(),
+                                memberLRoomRepository.countByLectureRoom_lRoomId(lectureRoom.getLRoomId())
+                        );
+                    } else {
+                        return new LectureRoomResponse(
+                                lectureRoom,
+                                memberLRoomRepository.countByLectureRoom_lRoomId(lectureRoom.getLRoomId())
+                        );
+                    }
+                })
                 .collect(Collectors.toList());
         return new LectureRoomListResponse(lectureRoomResponses);
     }
