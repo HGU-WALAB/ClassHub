@@ -206,8 +206,8 @@
       <!-- Begin Page Content -->
       <div class="container-fluid">
         <!-- Page Heading -->
-        <div id="whichLR_data" style="width:70%; margin:15px auto; display: none; min-width:300px; max-width:800px;">
-          <h1 class="h3 mb-4 text-gray-800" th:text="'< '+${lectureRoom.roomName} + ' > 나의 데이터 모아보기'"></h1>
+        <div id="whichLR_data" style="width:70%; margin:15px auto; min-width:300px; max-width:800px;">
+          <h1 class="mb-4 text-gray-800" th:text="${lectureRoom.roomName}"></h1>
         </div>
 
         <div style="width:70%; max-width:800px; margin:15px auto;">
@@ -260,7 +260,6 @@
 
             if (myScores.length !== 0) {
               document.getElementById('scoreChart').style.display = 'block';
-              document.getElementById('whichLR_data').style.display = 'block';
               document.getElementById('accordionPanelsStayOpenExample').style.display = 'block';
               document.getElementById('noScoresMessage').style.display = 'none';
             }
@@ -344,7 +343,6 @@
               if (myScores.length !== 0) {
                 // 차트를 숨기고, 메시지를 보여줍니다.
                 document.getElementById('scoreChart').style.display = 'block';
-                document.getElementById('whichLR_data').style.display = 'block';
                 document.getElementById('accordionPanelsStayOpenExample').style.display = 'block';
                 document.getElementById('noScoresMessage').style.display = 'none';
               }
