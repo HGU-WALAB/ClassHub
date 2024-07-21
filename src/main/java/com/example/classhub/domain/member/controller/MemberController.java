@@ -36,7 +36,7 @@ public class MemberController {
   }
 
 
-  @PostMapping("/saveMember") // member 저장하기
+//  @PostMapping("/saveMember") // member 저장하기
   // TODO : hisnet login 연결
   public String createMember(@ModelAttribute("member") MemberCreateRequest request, RedirectAttributes redirectAttrs){
     try {
@@ -48,20 +48,20 @@ public class MemberController {
     return "redirect:/member";
   }
 
-  @GetMapping("/delete/{memberId}") // member 삭제하기
+//  @GetMapping("/delete/{memberId}") // member 삭제하기
   public String deleteMember(@ModelAttribute("memberId") Long memberId){
     memberService.delete(memberId);
     return "redirect:/member";
   }
 
-  @GetMapping("/updateForm/{memberId}") // member 수정하기
+//  @GetMapping("/updateForm/{memberId}") // member 수정하기
   public String updateForm(@ModelAttribute("memberId") Long memberId, Model model){
     MemberDto memberDto = memberService.findMemberDtoByMemberId(memberId);
     model.addAttribute("member", memberDto);
     return "/member/memberUpdate";
   }
 
-  @PostMapping("/update/{memberId}") // member 수정하기
+//  @PostMapping("/update/{memberId}") // member 수정하기
   public String update(@ModelAttribute("memberId") Long memberId, @ModelAttribute("member") MemberCreateRequest request){
     memberService.update(memberId, MemberDto.from(request));
     return "redirect:/member";
