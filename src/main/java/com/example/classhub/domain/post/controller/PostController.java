@@ -86,7 +86,7 @@ public class PostController {
         return "redirect:/lecture-room/detail/" + lRoomId;
     }
 
-    @GetMapping("/post/{lRoomId}")
+//    @GetMapping("/post/{lRoomId}")
     public String findPostListByLectureRoomId(@PathVariable Long lRoomId, Model model) {
         List<PostDto> postList = postService.getPostListByLectureRoomId(lRoomId);
         model.addAttribute("posts", postList);
